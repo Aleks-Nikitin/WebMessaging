@@ -15,6 +15,7 @@ datasource db {
   email String @unique
   messages Message[]
   chats Chat[]
+  refreshToken String? @unique
  }
  model Chat{
   id Int @id @default(autoincrement())

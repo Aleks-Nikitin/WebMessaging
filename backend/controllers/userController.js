@@ -20,7 +20,7 @@ const validateUser=[
     }).withMessage("passwords don't match"),
    
 ]
-const createUser = [validateUser,async((req,res)=>{
+const createUser = [validateUser, async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
         throw new Error("invalid credentials");
@@ -37,7 +37,7 @@ const createUser = [validateUser,async((req,res)=>{
     })
     res.json({msg:"user created"})
 
-})]
+}]
 async function getUsers(req,res) {
 
     res.json("users");

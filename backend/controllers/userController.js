@@ -39,8 +39,8 @@ const createUser = [validateUser, async (req, res) => {
 
 }]
 async function getUsers(req,res) {
-
-    res.json("users");
+    const users = await prisma.user.findMany();
+    res.json(users);
 }
 
 

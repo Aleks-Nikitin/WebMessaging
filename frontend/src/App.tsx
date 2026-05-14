@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Navbar } from './componenets/Navbar'
+import  Navbar  from './componenets/Navbar'
 import './App.css'
+import { Outlet } from 'react-router'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -8,6 +9,9 @@ function App() {
   return (
     <>
     <Navbar></Navbar>
+    <Outlet>
+
+    </Outlet>
     </>
   )
 }

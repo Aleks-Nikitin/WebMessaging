@@ -12,7 +12,6 @@ async function verifyLogin(req,res) {
         return res.status(401).json({msg:"Username doesn't exist"});
         
     }
-    console.log(req.body.password);
 
     let password = await bcrypt.compare(req.body.password,userFound.password);
     if(!password){

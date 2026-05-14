@@ -9,7 +9,9 @@ function LoginPage(){
 
 
   async function onSubmit(e) {
-     e.preventDefault()
+    e.preventDefault()
+   
+
 
   }
 
@@ -40,14 +42,11 @@ function LoginPage(){
           />
         </label>
 
-        {errorMsg ? <p className="text-red-500 text-sm">{errorMsg}</p> : null}
-
         <button
           type="submit"
-          disabled={loading}
           className="w-full bg-indigo-600 text-white rounded px-3 py-2 disabled:opacity-60 hover:font-bold cursor-pointer"
         >
-          {loading ? 'Logging in...' : 'Login'}
+          Login
         </button>
       </form>
     </section>

@@ -19,11 +19,11 @@ const validateUser=[
         return value ==req.body.password;
     }).withMessage("passwords don't match"),
    
-]
+] 
 const createUser = [validateUser, async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        throw new Error("invalid credentials");
+        return res.json(errors);
     }
     const {firstname,lastname,email,password}=matchedData(req);
     const hashedPassword = await bcrypt.hash(password,10);

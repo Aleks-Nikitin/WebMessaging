@@ -6,4 +6,4 @@ const userRouter = Router();
 userRouter.get("/",authController.verifyJWT,userController.getUsers)
 userRouter.post("/",userController.createUser);
 userRouter.post("/login", authController.verifyLogin); // make it auth route and in a separate router
-export default userRouter;
+export default userRouter; 

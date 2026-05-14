@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, } from 'react'
+import { useNavigate } from 'react-router'
 
 function SignUpPage(){
 
@@ -7,37 +8,44 @@ function SignUpPage(){
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errors,setErrors]= useState(null);
   const [confpassword, setConfpassword] = useState('')
-
+  const navigate =useNavigate();
 
 
   async function onSubmit(e) {
     e.preventDefault()
     try {
-           const response = await fetch("http://localhost:3000/",{
+           const response = await fetch("http://localhost:3000/users/",{
     method: "POST",
-    headers:{'Content-Type':"application/json"},
-    credentials:"include",
-    body: JSON.stringify({firstname,lastname,email,password})
+    headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({firstname,lastname,email,password})
    });
+    const data = await response.json().catch(()=>null);
    if(!response.ok){
-        if(response.status == 401){
-            // return await sendRefreshToken();
-        }
         throw new Error(`${response.status} ${response.statusText}`);
         
    }
-   const data = await response.json();
-    } 
-    catch (error) {
-        console.error(error);
-    }
 
+    if(data?.msg ){
+       navigate("/login");
+    }else{
+        throw new Error("signup failed");
+        
+    }
+    } 
+    catch (err) {
+        console.error(err);
+        setErrors(err?.message);
+    }
+    
   }
 
   return (
     <section className="max-w-md mx-auto p-6">
+
       <h1 className="text-2xl font-semibold mb-4">Sign up</h1>
+      {errors && <h3 className='text-xl text-red-500'>{errors}</h3>}
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">

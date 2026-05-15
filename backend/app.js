@@ -1,11 +1,14 @@
 import express, { urlencoded } from "express";
 import cors from "cors";
+import corsOptions from "./config/corsOptions.js";
 import userRouter from "./routes/userRouter.js";
 import cookieParser from "cookie-parser";
 import refreshRouter from "./routes/refreshRouter.js";
 import logoutRouter from "./routes/logoutRouter.js";
+import credentials from "./config/credentials.js";
 const app = express();
-app.use(cors());
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use("/logout",logoutRouter);

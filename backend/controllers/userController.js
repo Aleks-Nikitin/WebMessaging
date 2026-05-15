@@ -3,7 +3,7 @@ import {prisma} from "../lib/prisma.js"
 import bcrypt from "bcryptjs";
 const lengthErr= "ERROR: length of the input must be more than 1";
 const emailErr= "Not a valid email";
-const nameErr ="ERROR:Lastname and surname needs to contain only letters (A-Z, a-z)"
+const nameErr ="ERROR:Lastname and firstname needs to contain only letters (A-Z, a-z)"
 const passwordErr="ERROR: Password Minimum length: 8 characters Minimum of 1 lowercase character ,Minimum of 1 uppercase character,Minimum of 1 number,Minimum of 1 symbol "
 const validateUser=[
     body("firstname").trim().isAlpha().withMessage(nameErr)

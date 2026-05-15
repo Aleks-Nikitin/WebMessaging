@@ -8,7 +8,7 @@ function SignUpPage(){
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errors,setErrors]= useState(null);
+  const [errors,setErrors]= useState<string[]>([]);
   const [confpassword, setConfpassword] = useState('')
   const navigate =useNavigate();
 
@@ -28,15 +28,18 @@ function SignUpPage(){
    }
 
     if(data?.msg ){
-       navigate("/login");
-    }else{
-        throw new Error("signup failed");
-        
+      navigate("/login");
+    } else {
+      const errArr = data?.errors ?? [];
+      console.log(data);
+      setErrors(errArr.map((obj: any) => obj.msg));
+      throw new Error("signup failed");
     }
     } 
     catch (err) {
         console.error(err);
-        setErrors(err?.message);
+        console.log(errors)
+        // setErrors(err?.message);
     }
     
   }
@@ -45,7 +48,7 @@ function SignUpPage(){
     <section className="max-w-md mx-auto p-6">
 
       <h1 className="text-2xl font-semibold mb-4">Sign up</h1>
-      {errors && <h3 className='text-xl text-red-500'>{errors}</h3>}
+     
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
@@ -103,7 +106,15 @@ function SignUpPage(){
           />
         </label>
 
-
+     {errors.length > 0 && (
+      
+           <ul className='text-l text-red-500 text-start '>
+             {errors.map((element, idx) => (
+               <li key={idx}>{element}</li>
+             ))}
+           </ul>
+       
+     )}
         <button
           type="submit"
           

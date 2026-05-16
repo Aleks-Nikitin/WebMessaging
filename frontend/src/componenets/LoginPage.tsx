@@ -1,16 +1,38 @@
-import { useState } from 'react'
-
+import { useState} from 'react'
+import { useAuth } from '../AuthContext'
+import { useNavigate } from 'react-router'
 
 function LoginPage(){
 
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const { setAccessToken } = useAuth();
+  const navigate =useNavigate();
 
-
-  async function onSubmit(e) {
+  async function onSubmit(e:any) {
     e.preventDefault()
-   
+    try {
+        const response= await fetch("http://localhost:3000/users/login",{
+            method:"POST",
+            headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+            credentials:"include",
+            body: new URLSearchParams({email,password})
+        })
+        if(!response.ok){
+            if(response.status == 401){
+                // return await sendRefreshToken();
+            }
+           throw new Error(`${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        if(!data.accessToken){
+            throw new Error("login failed")
+        }
+        setAccessToken(data.accessToken);
+        navigate('/')
+    } catch (error) {
+        console.error(error);
+    }
 
 
   }

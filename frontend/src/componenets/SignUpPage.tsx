@@ -1,25 +1,24 @@
-import { useState, } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 function SignUpPage(){
 
 
-  const [firstname, setFirstname] = useState('')
-  const [lastname, setLastname] = useState('')
-  const [email, setEmail] = useState('')
+  const [firstname, setFirstname] = useState<string>('')
+  const [lastname, setLastname] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState('')
   const [errors,setErrors]= useState<string[]>([]);
-  const [confpassword, setConfpassword] = useState('')
+  const [confpassword, setConfpassword] = useState<string>('')
   const navigate =useNavigate();
 
-
-  async function onSubmit(e) {
+  async function onSubmit(e: any) {
     e.preventDefault()
     try {
            const response = await fetch("http://localhost:3000/users/",{
     method: "POST",
     headers:{'Content-Type': 'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({firstname,lastname,email,password})
+    body: new URLSearchParams({firstname,lastname,email,password,confpassword})
    });
     const data = await response.json().catch(()=>null);
    if(!response.ok){
@@ -27,19 +26,15 @@ function SignUpPage(){
         
    }
 
-    if(data?.msg ){
-      navigate("/login");
-    } else {
-      const errArr = data?.errors ?? [];
-      console.log(data);
-      setErrors(errArr.map((obj: any) => obj.msg));
-      throw new Error("signup failed");
-    }
-    } 
-    catch (err) {
-        console.error(err);
-        console.log(errors)
-        // setErrors(err?.message);
+      if (data?.msg) {
+        navigate('/login')
+      } else {
+        const errArr = data?.errors ?? []
+        setErrors(errArr.map((obj: any) => obj.msg))
+        throw new Error('signup failed')
+      }
+    } catch (err) {
+      console.error(err)
     }
     
   }

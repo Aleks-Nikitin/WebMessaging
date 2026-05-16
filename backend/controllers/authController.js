@@ -17,21 +17,25 @@ async function verifyLogin(req,res) {
     if(!password){
         return res.status(401).json({msg:"Invalid password"});
     }
-    const accessToken= jwt.sign({email:userFound.email},
+    const accessToken= jwt.sign({id:userFound.id},
         process.env.ACCESS_TOKEN_SECRET,
         {expiresIn:"15m"});
-    const refreshToken= jwt.sign({email:userFound.email},
+    const refreshToken= jwt.sign({id:userFound.id},
         process.env.REFRESH_TOKEN_SECRET,
         {expiresIn:"2d"});
     await prisma.user.update({
         where:{
-            email:userFound.email
+            id:Number(userFound.id)
         },
         data:{
             refreshToken:refreshToken
         }
     })
-    res.cookie("jwt", refreshToken,{httpOnly:true,maxAge:2*24*60*60*1000});
+    res.cookie("jwt", refreshToken,{
+        secure: process.env.NODE_ENV ==="production",
+        httpOnly:true,
+        maxAge:2*24*60*60*1000,
+    });
     res.json({accessToken:accessToken});
 }
 async function verifyJWT(req,res,next) {
@@ -43,7 +47,7 @@ async function verifyJWT(req,res,next) {
         process.env.ACCESS_TOKEN_SECRET,
         (err,decoded)=>{
             if(err) return res.sendStatus(403); //invalid token
-            req.user=decoded.email;
+            req.user=decoded.id;
             next()
         }
     )

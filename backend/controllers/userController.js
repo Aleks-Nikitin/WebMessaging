@@ -38,6 +38,16 @@ const createUser = [validateUser, async (req, res) => {
     res.json({msg:"user created"})
 
 }]
+async function getMe(req,res) {
+    const id=req.user;
+    const user = await prisma.user.findUnique({
+        where:{
+            id:Number(id)
+        }
+    })
+    return res.json({user:user});
+    
+}
 async function getUsers(req,res) {
     const users = await prisma.user.findMany();
     res.json(users);
@@ -46,5 +56,6 @@ async function getUsers(req,res) {
 
 export default {
     getUsers,
+    getMe,
     createUser
 }

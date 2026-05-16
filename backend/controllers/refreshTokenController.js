@@ -22,9 +22,9 @@ async function handleRefreshToken(req,res) {
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
         (err,decoded)=>{
-            if(err || userFound.email!== decoded.email) return res.sendStatus(403);
+            if(err || userFound.id!== decoded.id) return res.sendStatus(403);
             const accessToken= jwt.sign(
-                {email:decoded.email},
+                {id:decoded.id},
                 process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn:"15m"}
 

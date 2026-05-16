@@ -21,7 +21,7 @@ async function handleLogout(req,res) {
 
     await prisma.user.update({
         where:{
-            email:userFound.email
+            id:Number(userFound.id)
         },
         data:{
             refreshToken:null

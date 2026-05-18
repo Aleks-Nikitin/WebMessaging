@@ -14,7 +14,7 @@ async function handleLogout(req,res) {
         }
     });
     if(!userFound){
-        res.clearCookie("jwt",{httpOnly:true,maxAge: 2*24*60*60*1000});
+        res.clearCookie("jwt",{httpOnly:true,maxAge: 2*24*60*60*1000,secure: process.env.NODE_ENV ==="production"});
         return res.sendStatus(204);
         
     }
@@ -27,7 +27,7 @@ async function handleLogout(req,res) {
             refreshToken:null
         }
     })
-    res.clearCookie("jwt",{httpOnly:true,maxAge: 2*24*60*60*1000,secure:true}); // secure: true - only serves on https
+    res.clearCookie("jwt",{httpOnly:true,maxAge: 2*24*60*60*1000,secure: process.env.NODE_ENV ==="production"}); // secure: true - only serves on https
     res.sendStatus(204);
 }
 

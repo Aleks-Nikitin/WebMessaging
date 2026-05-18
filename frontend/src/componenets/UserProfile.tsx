@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 
-type User = {
+export type User = {
     id: number;
     firstname: string;
     lastname: string;

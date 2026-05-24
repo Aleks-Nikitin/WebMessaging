@@ -6,6 +6,7 @@ import SignUpPage from "./componenets/SignUpPage.tsx"
 import './index.css'
 import App from './App.tsx'
 import LoginPage from './componenets/LoginPage.tsx'
+import Chat from './componenets/Chat.tsx'
 import  UserProfile  from './componenets/UserProfile.tsx'
 
 const router =createBrowserRouter([
@@ -15,6 +16,10 @@ const router =createBrowserRouter([
     children:[
       {
         index:true,
+        element: <Chat></Chat>
+      },
+      {
+        path:"/profile",
         element: <UserProfile></UserProfile>
       },
       {

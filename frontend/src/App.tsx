@@ -1,4 +1,4 @@
-import  Navbar  from './componenets/Navbar'
+import  Navbar  from './componenets/Navbar.tsx'
 import { Outlet } from 'react-router'
 
 function App() {

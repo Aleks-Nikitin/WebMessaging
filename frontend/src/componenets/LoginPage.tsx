@@ -1,4 +1,4 @@
-import { useState} from 'react'
+import { useState } from 'react'
 import { useAuth } from '../AuthContext'
 import { useNavigate } from 'react-router'
 
@@ -6,7 +6,7 @@ function LoginPage(){
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, setUser } = useAuth();
   const navigate =useNavigate();
 
   async function onSubmit(e:any) {
@@ -18,18 +18,34 @@ function LoginPage(){
             credentials:"include",
             body: new URLSearchParams({email,password})
         })
-        if(!response.ok){
-            if(response.status == 401){
-                // return await sendRefreshToken();
-            }
-           throw new Error(`${response.status} ${response.statusText}`);
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("Invalid email or password");
+          }
+
+          throw new Error(`${response.status} ${response.statusText}`);
         }
         const data = await response.json();
         if(!data.accessToken){
             throw new Error("login failed")
         }
         setAccessToken(data.accessToken);
-        navigate('/')
+        // fetch current user immediately using returned token
+        try {
+            const meRes = await fetch("http://localhost:3000/users/me", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${data.accessToken}` },
+            credentials: "include",
+          });
+          if (meRes.ok) {
+            const body = await meRes.json().catch(() => null);
+            const user = body ? body.user : null;
+            setUser(user || null);
+          }
+        } catch (e) {
+          // ignore user bootstrap errors here
+        }
+        navigate('/');
     } catch (error) {
         console.error(error);
     }

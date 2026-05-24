@@ -1,50 +1,26 @@
-import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 
-export type User = {
-    id: number;
-    firstname: string;
-    lastname: string;
-    email: string;
-};
-
 function UserProfile() {
-    const { authFetch } = useAuth();
-    const [user, setUser] = useState<User>();
-    const [error, setError] = useState("");
+    const { user, isLoading } = useAuth();
 
-    useEffect(() => {
-        async function loadUser() {
-            const response = await authFetch("http://localhost:3000/users/me", {
-                method: "GET",
-            });
+    if (isLoading) {
+        return <h1>Loading...</h1>;
+    }
 
-            if (!response.ok) {
-                setError("You are not authenticated. Please log in.");
-                return;
-            }
-
-            const {user} = await response.json().catch(() => null);
-            console.log(user)
-
-            setUser(user);
-        }
-
-        void loadUser();
-    }, [authFetch]);
-
-    if (error) {
-        return <h1>{error}</h1>;
+    if (!user) {
+        return <h1>You are not authenticated. Please log in.</h1>;
     }
 
     return (
         <section>
-            <h1>user profile page</h1>
-            <ul>
-                {user && (
-                    <li >{user.firstname} {user.lastname} ({user.email})</li>
-                )}
-            </ul>
+            <h1 className="text-2xl text-amber-300">Profile page</h1>
+
+            <div className="flex flex-col align-baseline text-xl text-blue-400">
+                <div>First Name: {user.firstname}</div>
+                <div>Surname: {user.lastname}</div>
+                <div>Email: {user.email}</div>
+            </div>
+           
         </section>
     );
 }

@@ -8,7 +8,8 @@ type UserOption = {
 };
 
 export default function Chat(){
-
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+    const [searchValue, setSearchValue] = useState("");
     const { user, isLoading, authFetch } = useAuth();
     const [userList, setUserList] = useState<UserOption[]>([]);
      useEffect(()=>{
@@ -39,6 +40,45 @@ export default function Chat(){
      if (!user) {
         return <h1>You are not authenticated. Please log in.</h1>;
      }
+      const currentUser = user;
+
+      function handleUserSearchChange(e) {
+        const value = e.target.value;
+        setSearchValue(value);
+
+        const matchedUser = userList.find(
+            (candidate) => `${candidate.firstname} ${candidate.lastname}` === value
+        );
+
+        setSelectedUserId(matchedUser ? matchedUser.id : null);
+      }
+
+      async function handleChatCreation(e: any) {
+        e.preventDefault();
+
+        if (!selectedUserId) {
+            console.log("Please select a user from the list");
+            return;
+        }
+
+        try {
+            const response = await authFetch("http://localhost:3000/chats",{
+                method:"POST",
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: new URLSearchParams({
+                        userId: String(currentUser.id),
+                        selectedUser: String(selectedUserId),
+                    })
+
+            })
+            const result = await response.json().catch(()=>null);
+            if(result){
+                console.log("success");
+            }
+        } catch (error) {
+            
+        }
+     }
 
     return(
         <>
@@ -47,13 +87,27 @@ export default function Chat(){
             <div className="sidebar row-span-5 col-span-1">
                 Chats:
             </div>
-               <div className="search row-span-1 col-span-4">
+               <div className="row-span-1 col-span-4 ">
             <p>Search by username:</p>
-            <form action="" method="post">
-                <input list="users" name="user-selected" className="bg-white text-black"/>
+            <form onSubmit={handleChatCreation} className="flex justify-center p-3">
+                <div className="flex gap-2">
+                    <input
+                        list="users"
+                        name="user-selected"
+                        className="bg-white text-black"
+                        value={searchValue}
+                        onChange={handleUserSearchChange}
+                    />
+                    <button type="submit" className="px-3 py-1 border rounded hover:cursor-pointer">
+                        Create Chat
+                    </button>
+                </div> 
                 <datalist id="users" className="bg-red-500">
-                    {userList.map(user => (
-                        <option key={user.id} value={user.firstname + " " + user.lastname} />
+                    {userList.map((candidate) => (
+                        <option
+                            key={candidate.id}
+                            value={`${candidate.firstname} ${candidate.lastname}`}
+                        />
                     ))}
                     
                 </datalist>

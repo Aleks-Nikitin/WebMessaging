@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useAuth } from "../AuthContext";
 
 type UserOption = {
@@ -11,6 +11,12 @@ export default function Chat(){
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [searchValue, setSearchValue] = useState("");
     const { user, isLoading, authFetch } = useAuth();
+    type ChatItem = {
+        chatId: number;
+        chatter: number;
+        msg?: string;
+    };
+    const [chatArr, setChatArr] = useState<ChatItem[]>([]);
     const [userList, setUserList] = useState<UserOption[]>([]);
      useEffect(()=>{
         async function getUsersList() {
@@ -42,7 +48,7 @@ export default function Chat(){
      }
       const currentUser = user;
 
-      function handleUserSearchChange(e) {
+    function handleUserSearchChange(e: ChangeEvent<HTMLInputElement>) {
         const value = e.target.value;
         setSearchValue(value);
 
@@ -73,7 +79,13 @@ export default function Chat(){
             })
             const result = await response.json().catch(()=>null);
             if(result){
-                console.log("success");
+                setChatArr((prev) => {
+                    if (prev.some((chat) => chat.chatId === result.chatId)) {
+                        return prev;
+                    }
+
+                    return [result, ...prev];
+                });
             }
         } catch (error) {
             
@@ -85,7 +97,15 @@ export default function Chat(){
          <h1 className="text-2xl font-semibold mb-4">Chat with users!</h1>
          <div className="grid grid-rows-5 grid-cols-5 border-2 p-8 mt-15">
             <div className="sidebar row-span-5 col-span-1">
-                Chats:
+                <h2>Chats:</h2>
+                <ul>
+                    {chatArr.map((chat)=>{
+                        let chatter =userList.find((user)=> user.id == chat.chatter);
+                        return (
+                    <li className="hover:font-bold hover:cursor-pointer" key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
+                        )
+                })}
+                </ul>
             </div>
                <div className="row-span-1 col-span-4 ">
             <p>Search by username:</p>
@@ -98,7 +118,7 @@ export default function Chat(){
                         value={searchValue}
                         onChange={handleUserSearchChange}
                     />
-                    <button type="submit" className="px-3 py-1 border rounded hover:cursor-pointer">
+                    <button type="submit" className="px-3 py-1 border rounded hover:cursor-pointer hover:font-bold">
                         Create Chat
                     </button>
                 </div> 

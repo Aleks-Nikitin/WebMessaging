@@ -17,6 +17,8 @@ export default function Chat(){
         msg?: string;
     };
     const [chatArr, setChatArr] = useState<ChatItem[]>([]);
+    const [text,setText]= useState<string>();
+    const [activeChatId,setActiveChatId]=useState<number | null>(null);
     const [userList, setUserList] = useState<UserOption[]>([]);
      useEffect(()=>{
         async function getUsersList() {
@@ -91,18 +93,48 @@ export default function Chat(){
             
         }
      }
+     async function handleMsgCreate(e) {
+        e.preventDefault();
+
+        if (!text ) {
+            console.log("type a message");
+            return;
+        }
+
+        try {
+            const response = await authFetch("http://localhost:3000/messages",{
+                method:"POST",
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: new URLSearchParams({
+                        senderId: String(currentUser.id),
+                        chatId: String(activeChatId),
+                        text: String(text),
+                    })
+
+            })
+            const result = await response.json().catch(()=>null);
+            if(result){
+                console.log("success");
+            }
+        } catch (error) {
+            
+        }
+        
+     }
 
     return(
-        <>
+        <div className="h-full flex-1 flex flex-col">
          <h1 className="text-2xl font-semibold mb-4">Chat with users!</h1>
-         <div className="grid grid-rows-5 grid-cols-5 border-2 p-8 mt-15">
+         <div className="grid grid-rows-5 grid-cols-5 border-2 p-8 mt-2 h-full flex-1">
             <div className="sidebar row-span-5 col-span-1">
                 <h2>Chats:</h2>
                 <ul>
                     {chatArr.map((chat)=>{
                         let chatter =userList.find((user)=> user.id == chat.chatter);
                         return (
-                    <li className="hover:font-bold hover:cursor-pointer" key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
+                    <li className="hover:font-bold hover:cursor-pointer" onClick={()=>
+                        setActiveChatId(chat.chatId)
+                    } key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
                         )
                 })}
                 </ul>
@@ -133,12 +165,17 @@ export default function Chat(){
                 </datalist>
             </form>
          </div>
-         <div className="chat row-span-4 col-span-4">
-             Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum maiores, accusantium sapiente earum corrupti officiis veniam? Optio, explicabo consectetur laudantium accusantium vel consequatur ea mollitia exercitationem beatae quisquam, corporis doloribus.
-             Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere sequi asperiores, a, neque quia voluptatibus, veniam nostrum nulla laborum quisquam eos optio sunt unde quibusdam eum officia fuga impedit velit?
+         <div className="grid row-span-4 col-span-4 grid-rows-5 w-[75%] my-0 mx-auto">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-4 text-slate-800 row-span-4">
+                <h2>chat</h2>
+            </div>
+           <form onSubmit={handleMsgCreate} className="bg-blue-900 flex  justify-center">
+                    <textarea onChange={(e)=> setText(e.target.value)} placeholder="Write a message" value={text} className="p-2 border rounded"/>
+                    <button className="p-1 border rounded hover:font-bold hover:cursor-pointer" >Send</button>
+           </form>
          </div>
          </div>
       
-        </>
+        </div>
     )
 }

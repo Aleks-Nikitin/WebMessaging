@@ -9,7 +9,7 @@ async function createMsg(req,res) {
         }
     })
     res.json({msg:"sent"})
-}
+} 
 
 export default {
     createMsg

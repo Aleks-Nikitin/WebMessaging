@@ -18,11 +18,18 @@ async function createChat(req,res) {
         { users: { some: { id: selectedUserId } } },
       ],
     },
-    select: { id: true },
+    include: {
+      messages: true,
+    },
   });
 
   if (existingChat) {
-    return res.json({ msg: "chat exists", chatId: existingChat.id,chatter:selectedUserId });
+    return res.json({
+      msg: "chat exists",
+      chatId: existingChat.id,
+      chatter: selectedUserId,
+      messages: existingChat.messages,
+    });
   }
 
   const created = await prisma.chat.create({
@@ -31,9 +38,16 @@ async function createChat(req,res) {
         connect: [{ id: currentUserId }, { id: selectedUserId }],
       },
     },
-    select: { id: true },
+    include: {
+      messages: true,
+    },
   });
-   return res.status(201).json({ msg: "chat created", chatId: created.id,chatter:selectedUserId});
+   return res.status(201).json({
+    msg: "chat created",
+    chatId: created.id,
+    chatter: selectedUserId,
+    messages: created.messages,
+  });
 }
 
 export default {

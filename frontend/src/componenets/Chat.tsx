@@ -11,14 +11,22 @@ export default function Chat(){
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [searchValue, setSearchValue] = useState("");
     const { user, isLoading, authFetch } = useAuth();
+    type MessageItem = {
+        id: number;
+        text: string;
+        userId: number;
+    };
+
     type ChatItem = {
         chatId: number;
         chatter: number;
+        messages?: MessageItem[];
         msg?: string;
     };
     const [chatArr, setChatArr] = useState<ChatItem[]>([]);
     const [text,setText]= useState<string>();
     const [activeChatId,setActiveChatId]=useState<number | null>(null);
+    const [messages, setMessages] = useState<MessageItem[]>([]);
     const [userList, setUserList] = useState<UserOption[]>([]);
      useEffect(()=>{
         async function getUsersList() {
@@ -85,7 +93,6 @@ export default function Chat(){
                     if (prev.some((chat) => chat.chatId === result.chatId)) {
                         return prev;
                     }
-
                     return [result, ...prev];
                 });
             }
@@ -93,7 +100,14 @@ export default function Chat(){
             
         }
      }
-     async function handleMsgCreate(e) {
+
+    function handleChatSelect(chat: ChatItem) {
+        setActiveChatId(chat.chatId);
+        setSelectedUserId(chat.chatter);
+        setMessages(chat.messages ?? []);
+    }
+
+    async function handleMsgCreate(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         if (!text ) {
@@ -121,7 +135,6 @@ export default function Chat(){
         }
         
      }
-
     return(
         <div className="h-full flex-1 flex flex-col">
          <h1 className="text-2xl font-semibold mb-4">Chat with users!</h1>
@@ -132,9 +145,7 @@ export default function Chat(){
                     {chatArr.map((chat)=>{
                         let chatter =userList.find((user)=> user.id == chat.chatter);
                         return (
-                    <li className="hover:font-bold hover:cursor-pointer" onClick={()=>
-                        setActiveChatId(chat.chatId)
-                    } key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
+                    <li className="hover:font-bold hover:cursor-pointer" onClick={() => handleChatSelect(chat)} key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
                         )
                 })}
                 </ul>
@@ -165,15 +176,24 @@ export default function Chat(){
                 </datalist>
             </form>
          </div>
-         <div className="grid row-span-4 col-span-4 grid-rows-5 w-[75%] my-0 mx-auto">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-4 text-slate-800 row-span-4">
-                <h2>chat</h2>
+         { activeChatId && <div className="grid row-span-4 col-span-4 grid-rows-5 w-[75%] my-0 mx-auto">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-4 text-slate-800 row-span-4 overflow-y-auto">
+                {messages && messages.map((msg)=>{
+                    let text = msg.text;
+                    let user = msg.userId == currentUser.id ? "me" : false;
+                    return (
+                        <div className="grid " key={msg.id}>
+                            <h4>{user}</h4>
+                            <p>{text}</p>
+                        </div>
+                    )
+                })}
             </div>
            <form onSubmit={handleMsgCreate} className="bg-blue-900 flex  justify-center">
                     <textarea onChange={(e)=> setText(e.target.value)} placeholder="Write a message" value={text} className="p-2 border rounded"/>
                     <button className="p-1 border rounded hover:font-bold hover:cursor-pointer" >Send</button>
            </form>
-         </div>
+         </div>}
          </div>
       
         </div>

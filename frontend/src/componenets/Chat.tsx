@@ -129,6 +129,18 @@ export default function Chat(){
             const result = await response.json().catch(()=>null);
             if(result){
                 console.log("success");
+                setMessages((prev) => [...prev, result]);
+                setChatArr((prev) =>
+                    prev.map((chat) =>
+                        chat.chatId === activeChatId
+                            ? {
+                                  ...chat,
+                                  messages: [...(chat.messages ? chat.messages : []), result],
+                              }
+                            : chat
+                    )
+                );
+                setText("")
             }
         } catch (error) {
             
@@ -179,6 +191,7 @@ export default function Chat(){
          { activeChatId && <div className="grid row-span-4 col-span-4 grid-rows-5 w-[75%] my-0 mx-auto">
             <div className="bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-4 text-slate-800 row-span-4 overflow-y-auto">
                 {messages && messages.map((msg)=>{
+
                     let text = msg.text;
                     let user = msg.userId == currentUser.id ? "me" : false;
                     return (

@@ -38,7 +38,6 @@ export default function Chat(){
                 });
 
                 if (!users.ok) {
-                    console.log("not okey");
                     return;
                 }
                 const body = await users.json().catch(() => null);
@@ -59,6 +58,7 @@ export default function Chat(){
         return <h1>You are not authenticated. Please log in.</h1>;
      }
       const currentUser = user;
+    const hasActiveChat = activeChatId !== null;
 
     function handleUserSearchChange(e: ChangeEvent<HTMLInputElement>) {
         const value = e.target.value;
@@ -130,7 +130,6 @@ export default function Chat(){
             })
             const result = await response.json().catch(()=>null);
             if(result){
-                console.log("success");
                 setMessages((prev) => [...prev, result]);
                 setChatArr((prev) =>
                     prev.map((chat) =>
@@ -150,10 +149,10 @@ export default function Chat(){
         
      }
     return(
-        <div className="flex min-h-0 flex-1 flex-col p-4">
+        <div className="chat-page flex min-h-0 flex-1 flex-col p-4">
          <h1 className="text-2xl font-semibold mb-4">Chat with users!</h1>
-         <div className="grid flex-1 min-h-0 grid-cols-[16rem_minmax(0,1fr)] gap-4 rounded-lg border p-4">
-            <aside className="min-h-0 overflow-y-auto border-r pr-4 text-left">
+         <div className="chat-shell grid flex-1 min-h-0 grid-cols-[16rem_minmax(0,1fr)] gap-4 rounded-lg p-4">
+            <aside className="chat-sidebar min-h-0 overflow-y-auto border-r pr-4 text-left">
                 <h2 className="mb-3 font-semibold">Chats:</h2>
                 <ul className="space-y-2">
                     {chatArr.map((chat)=>{
@@ -161,7 +160,7 @@ export default function Chat(){
                         const isSelected = chatter?.id === selectedUserId;
                         return (
                             <li
-                                className={`cursor-pointer rounded px-2 py-1 hover:font-semibold ${
+                                className={`cursor-pointer rounded px-2 py-1 hover:font-semibold wrap-break-word ${
                                     isSelected ? "bg-green-600 text-white font-semibold" : ""
                                 }`}
                                 onClick={() => handleChatSelect(chat)}
@@ -174,10 +173,14 @@ export default function Chat(){
                 </ul>
             </aside>
 
-            <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4">
-                <div className="shrink-0 text-left">
+            <section
+                className={`chat-main grid min-h-0 gap-4 ${
+                    hasActiveChat ? "grid-rows-[auto_minmax(0,1fr)]" : "grid-rows-[auto]"
+                }`}
+            >
+                <div className="chat-search shrink-0 text-left">
                     <p>Search by username:</p>
-                    <form onSubmit={handleChatCreation} className="mt-2 flex items-center gap-2">
+                    <form onSubmit={handleChatCreation} className="search-form mt-2 flex items-center gap-2">
                         <input
                             list="users"
                             name="user-selected"
@@ -200,17 +203,17 @@ export default function Chat(){
                 </div>
 
                 {activeChatId && (
-                    <div className="flex min-h-0 max-h-[65vh] flex-col overflow-hidden rounded-xl border bg-slate-50 text-slate-800 shadow-sm">
-                        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                    <div className="chat-panel flex min-h-0 max-h-[65vh] flex-col overflow-hidden rounded-xl border bg-slate-50 text-slate-800 shadow-sm">
+                        <div className="chat-message-list min-h-0 flex-1 overflow-y-auto p-4">
                             <div className="space-y-3 flex flex-col">
                                 {messages.map((msg)=>{
                                     let text = msg.text;
                                     let userLabel = msg.userId == currentUser.id ? "me" : "them";
                                     let userColor =msg.userId == currentUser.id  ? true : false;
                                     return (
-                                        <div className={`rounded-lg p-1 shadow-sm w-[60%] ${userColor ? "bg-blue-200 self-baseline" : "bg-gray-200 self-end"}`} key={msg.id}>
+                                        <div className={`chat-bubble rounded-lg p-2 shadow-sm ${userColor ? "bg-blue-200 self-start" : "bg-gray-200 self-end"}`} key={msg.id}>
                                             <h4 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-800">{userLabel}</h4>
-                                            <p>{text}</p>
+                                            <p className="break-words whitespace-pre-wrap">{text}</p>
                                         </div>
                                     )
                                 })}

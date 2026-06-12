@@ -69,4 +69,77 @@ body {
   color: var(--text-h);
 }
 
+@media (max-width: 700px) {
+  #root {
+    width: 100%;
+    border-inline: 0;
+  }
+
+  .app-navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .app-navbar-brand,
+  .app-navbar-links {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .app-navbar h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-navbar-links {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .chat-page {
+    padding: 0.75rem;
+  }
+
+  .chat-shell {
+    grid-template-columns: 1fr 4fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  .search-form{
+    flex-direction: column;
+  }
+  .chat-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0;
+    padding-bottom: 0.5rem;
+    max-height: 30rem;
+  }
+
+  .chat-main {
+    gap: 0.5rem;
+  }
+
+  .chat-search input {
+    max-width: none;
+    width: 100%;
+  }
+
+
+  .chat-message-list {
+    padding: 0.5rem;
+  }
+
+  .chat-panel textarea {
+    min-height: 4rem;
+  }
+
+  .chat-bubble {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 

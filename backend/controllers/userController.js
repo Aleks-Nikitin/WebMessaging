@@ -57,10 +57,51 @@ async function getCleanUsers(req,res) {
     const cleanUsers= Object.values(users).map(({password,refreshToken, ...rest})=>rest );
     res.json(cleanUsers);
 }
-
+async function updateEmail(req,res) {
+    const id=req.user;
+    const {email} = req.body;
+    const updatedUser = await prisma.user.update({
+        where:{
+            id: Number(id)
+        },
+        data:{
+            email: email
+        }
+    })
+    return res.json({ user: updatedUser });
+}
+async function updateFirstname(req,res) {
+    const id=req.user;
+    const {firstname} = req.body;
+    const updatedUser = await prisma.user.update({
+        where:{
+            id: Number(id)
+        },
+        data:{
+            firstname: firstname
+        }
+    })
+    return res.json({ user: updatedUser });
+}
+async function updateLastname(req,res) {
+    const id=req.user;
+    const {lastname} = req.body;
+    const updatedUser = await prisma.user.update({
+        where:{
+            id: Number(id)
+        },
+        data:{
+            lastname: lastname
+        }
+    })
+    return res.json({ user: updatedUser });
+}
 export default {
     getUsers,
     getCleanUsers,
     getMe,
-    createUser
+    createUser,
+    updateEmail,
+    updateFirstname,
+    updateLastname
 }

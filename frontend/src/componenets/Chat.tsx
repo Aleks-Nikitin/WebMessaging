@@ -5,6 +5,7 @@ type UserOption = {
     id: number;
     firstname: string;
     lastname: string;
+    email:string;
 };
 
 export default function Chat(){
@@ -15,6 +16,7 @@ export default function Chat(){
         id: number;
         text: string;
         userId: number;
+        
     };
 
     type ChatItem = {
@@ -63,7 +65,7 @@ export default function Chat(){
         setSearchValue(value);
 
         const matchedUser = userList.find(
-            (candidate) => `${candidate.firstname} ${candidate.lastname}` === value
+            (candidate) => `${candidate.email}` === value
         );
 
         setSelectedUserId(matchedUser ? matchedUser.id : null);
@@ -148,67 +150,87 @@ export default function Chat(){
         
      }
     return(
-        <div className="h-full flex-1 flex flex-col">
+        <div className="flex min-h-0 flex-1 flex-col p-4">
          <h1 className="text-2xl font-semibold mb-4">Chat with users!</h1>
-         <div className="grid grid-rows-5 grid-cols-5 border-2 p-8 mt-2 h-full flex-1">
-            <div className="sidebar row-span-5 col-span-1">
-                <h2>Chats:</h2>
-                <ul>
+         <div className="grid flex-1 min-h-0 grid-cols-[16rem_minmax(0,1fr)] gap-4 rounded-lg border p-4">
+            <aside className="min-h-0 overflow-y-auto border-r pr-4 text-left">
+                <h2 className="mb-3 font-semibold">Chats:</h2>
+                <ul className="space-y-2">
                     {chatArr.map((chat)=>{
-                        let chatter =userList.find((user)=> user.id == chat.chatter);
+                        let chatter = userList.find((user)=> user.id == chat.chatter);
+                        const isSelected = chatter?.id === selectedUserId;
                         return (
-                    <li className="hover:font-bold hover:cursor-pointer" onClick={() => handleChatSelect(chat)} key={chat.chatId}>{`${chatter?.firstname} ${chatter?.lastname} `}</li>
+                            <li
+                                className={`cursor-pointer rounded px-2 py-1 hover:font-semibold ${
+                                    isSelected ? "bg-green-600 text-white font-semibold" : ""
+                                }`}
+                                onClick={() => handleChatSelect(chat)}
+                                key={chat.chatId}
+                            >
+                                {`${chatter?.email}`}
+                            </li>
                         )
-                })}
+                    })}
                 </ul>
-            </div>
-               <div className="row-span-1 col-span-4 ">
-            <p>Search by username:</p>
-            <form onSubmit={handleChatCreation} className="flex justify-center p-3">
-                <div className="flex gap-2">
-                    <input
-                        list="users"
-                        name="user-selected"
-                        className="bg-white text-black"
-                        value={searchValue}
-                        onChange={handleUserSearchChange}
-                    />
-                    <button type="submit" className="px-3 py-1 border rounded hover:cursor-pointer hover:font-bold">
-                        Create Chat
-                    </button>
-                </div> 
-                <datalist id="users" className="bg-red-500">
-                    {userList.map((candidate) => (
-                        <option
-                            key={candidate.id}
-                            value={`${candidate.firstname} ${candidate.lastname}`}
-                        />
-                    ))}
-                    
-                </datalist>
-            </form>
-         </div>
-         { activeChatId && <div className="grid row-span-4 col-span-4 grid-rows-5 w-[75%] my-0 mx-auto">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-4 text-slate-800 row-span-4 overflow-y-auto">
-                {messages && messages.map((msg)=>{
+            </aside>
 
-                    let text = msg.text;
-                    let user = msg.userId == currentUser.id ? "me" : false;
-                    return (
-                        <div className="grid " key={msg.id}>
-                            <h4>{user}</h4>
-                            <p>{text}</p>
+            <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4">
+                <div className="shrink-0 text-left">
+                    <p>Search by username:</p>
+                    <form onSubmit={handleChatCreation} className="mt-2 flex items-center gap-2">
+                        <input
+                            list="users"
+                            name="user-selected"
+                            className="w-full max-w-md rounded border bg-white px-3 py-2 text-black"
+                            value={searchValue}
+                            onChange={handleUserSearchChange}
+                        />
+                        <button type="submit" className="shrink-0 rounded border px-3 py-2 hover:cursor-pointer hover:font-bold">
+                            Create Chat
+                        </button>
+                        <datalist id="users">
+                            {userList.map((candidate) => (
+                                <option
+                                    key={candidate.id}
+                                    value={`${candidate.email}`}
+                                />
+                            ))}
+                        </datalist>
+                    </form>
+                </div>
+
+                {activeChatId && (
+                    <div className="flex min-h-0 max-h-[65vh] flex-col overflow-hidden rounded-xl border bg-slate-50 text-slate-800 shadow-sm">
+                        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                            <div className="space-y-3 flex flex-col">
+                                {messages.map((msg)=>{
+                                    let text = msg.text;
+                                    let userLabel = msg.userId == currentUser.id ? "me" : "them";
+                                    let userColor =msg.userId == currentUser.id  ? true : false;
+                                    return (
+                                        <div className={`rounded-lg p-1 shadow-sm w-[60%] ${userColor ? "bg-blue-200 self-baseline" : "bg-gray-200 self-end"}`} key={msg.id}>
+                                            <h4 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-800">{userLabel}</h4>
+                                            <p>{text}</p>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
-                    )
-                })}
-            </div>
-           <form onSubmit={handleMsgCreate} className="bg-blue-900 flex  justify-center">
-                    <textarea onChange={(e)=> setText(e.target.value)} placeholder="Write a message" value={text} className="p-2 border rounded"/>
-                    <button className="p-1 border rounded hover:font-bold hover:cursor-pointer" >Send</button>
-           </form>
-         </div>}
+                        <form onSubmit={handleMsgCreate} className="shrink-0 border-t bg-blue-900 p-3 text-white">
+                            <div className="flex gap-2">
+                                <textarea
+                                    onChange={(e)=> setText(e.target.value)}
+                                    placeholder="Write a message"
+                                    value={text}
+                                    className="min-h-16 flex-1 rounded border p-2"
+                                />
+                                <button className="rounded border p-2 hover:cursor-pointer hover:font-bold" >Send</button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+            </section>
          </div>
-      
         </div>
     )
 }

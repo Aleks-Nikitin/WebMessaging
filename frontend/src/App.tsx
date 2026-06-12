@@ -5,9 +5,9 @@ function App() {
   return (
     <>
     <Navbar></Navbar>
-    <Outlet>
-
-    </Outlet>
+    <main className="flex-1 min-h-0 flex flex-col">
+      <Outlet />
+    </main>
     </>
   )
 }

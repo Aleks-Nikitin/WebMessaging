@@ -54,7 +54,7 @@ async function getUsers(req,res) {
 }
 async function getCleanUsers(req,res) {
     const users = await prisma.user.findMany();
-    const cleanUsers= Object.values(users).map(({password,refreshToken,email, ...rest})=>rest );
+    const cleanUsers= Object.values(users).map(({password,refreshToken, ...rest})=>rest );
     res.json(cleanUsers);
 }
 

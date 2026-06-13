@@ -18,7 +18,7 @@ app.use("/refresh",refreshRouter);
 app.use("/users",userRouter);
 app.use("/chats",chatRouter)
 app.use("/messages",msgRouter);
-app.listen(3000,"localhost",(err)=>{
+app.listen(process.env.PORT,"0.0.0.0",(err)=>{
     if(err){
         throw new Error("server is down");
     }

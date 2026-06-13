@@ -34,7 +34,7 @@ function UserProfile() {
             return;
         }
 
-        const response = await authFetch(`http://localhost:3000/users/update/${path}`, {
+        const response = await authFetch(`${import.meta.env.VITE_BACKEND}/users/update/${path}`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({ [field]: value }),
@@ -59,14 +59,14 @@ function UserProfile() {
         <section className="p-4">
             <h1 className="mb-6 text-3xl text-amber-300">Profile page</h1>
 
-            <div className="flex flex-col gap-4 text-2xl text-blue-400 ">
+            <div className="flex flex-col items-center gap-4 text-2xl text-blue-400 ">
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 text-2xl">
                         <p>
                             First Name: <span className="text-green-300">{user.firstname}</span>
                         </p>
                         <button
-                            className="text-[18px] text-white hover:cursor-pointer hover:font-bold"
+                            className="text-xl text-white hover:cursor-pointer hover:font-bold"
                             type="button"
                             onClick={() => toggleField("firstname")}
                         >
@@ -79,9 +79,6 @@ function UserProfile() {
                         onSubmit={(e) => submitUpdate(e, "firstname", firstname, "firstname")}
                         className="flex flex-col gap-2"
                     >
-                        <label className="text-red-300 self-start" htmlFor="firstname-update">
-                            New First Name:
-                        </label>
                         <div className="flex gap-2">
                             <input
                                 id="firstname-update"
@@ -104,7 +101,7 @@ function UserProfile() {
                             Surname: <span className="text-green-300">{user.lastname}</span>
                         </p>
                         <button
-                            className="text-[18px] text-white hover:cursor-pointer hover:font-bold"
+                            className="text-xl text-white hover:cursor-pointer hover:font-bold"
                             type="button"
                             onClick={() => toggleField("lastname")}
                         >
@@ -117,9 +114,7 @@ function UserProfile() {
                         onSubmit={(e) => submitUpdate(e, "lastname", lastname, "lastname")}
                         className="flex flex-col gap-2"
                     >
-                        <label className="text-red-300 self-start" htmlFor="lastname-update">
-                            New Surname:
-                        </label>
+                    
                         <div className="flex gap-2">
                             <input
                                 id="lastname-update"
@@ -142,7 +137,7 @@ function UserProfile() {
                             Email: <span className="text-green-300">{user.email}</span>
                         </p>
                         <button
-                            className="text-[18px] text-white hover:cursor-pointer hover:font-bold"
+                            className="text-xl text-white hover:cursor-pointer hover:font-bold"
                             type="button"
                             onClick={() => toggleField("email")}
                         >
@@ -155,9 +150,7 @@ function UserProfile() {
                         onSubmit={(e) => submitUpdate(e, "email", email, "email")}
                         className="flex flex-col gap-2"
                     >
-                        <label className="text-red-300 self-start" htmlFor="email-update">
-                            New Email:
-                        </label>
+                    
                         <div className="flex gap-2">
                             <input
                                 id="email-update"

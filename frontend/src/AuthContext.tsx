@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         async function bootstrap() {
             try {
                 // try refresh first (server will read httpOnly cookie)
-                const refreshRes = await fetch("http://localhost:3000/refresh", {
+                const refreshRes = await fetch(`${import.meta.env.VITE_BACKEND}/refresh`, {
                     method: "GET",
                     credentials: "include",
                 });
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
 
                 // fetch current user with the fresh token
-                const meRes = await fetch("http://localhost:3000/users/me", {
+                const meRes = await fetch(`${import.meta.env.VITE_BACKEND}/users/me`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                     credentials: "include",
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (response.status !== 401) return response;
 
         // attempt refresh once
-        const refreshRes = await fetch("http://localhost:3000/refresh", {
+        const refreshRes = await fetch(`${import.meta.env.VITE_BACKEND}/refresh`, {
             method: "GET",
             credentials: "include",
         });
@@ -126,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = useCallback(async () => {
         try {
-            await fetch("http://localhost:3000/logout", { method: "GET", credentials: "include" });
+            await fetch(`${import.meta.env.VITE_BACKEND}/logout`, { method: "GET", credentials: "include" });
         } catch (e) {
             // ignore
         }

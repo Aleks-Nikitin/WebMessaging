@@ -6,13 +6,14 @@ function LoginPage(){
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errors,setErrors]= useState<string>();
   const { setAccessToken, setUser } = useAuth();
   const navigate =useNavigate();
 
   async function onSubmit(e:any) {
     e.preventDefault()
     try {
-        const response= await fetch("http://localhost:3000/users/login",{
+        const response= await fetch(`${import.meta.env.VITE_BACKEND}/users/login`,{
             method:"POST",
             headers:{'Content-Type': 'application/x-www-form-urlencoded'},
             credentials:"include",
@@ -20,6 +21,7 @@ function LoginPage(){
         })
         if (!response.ok) {
           if (response.status === 401) {
+            setErrors("Invalid email or password");
             throw new Error("Invalid email or password");
           }
 
@@ -32,7 +34,7 @@ function LoginPage(){
         setAccessToken(data.accessToken);
         // fetch current user immediately using returned token
         try {
-            const meRes = await fetch("http://localhost:3000/users/me", {
+            const meRes = await fetch(`${import.meta.env.VITE_BACKEND}/users/me`, {
             method: "GET",
             headers: { Authorization: `Bearer ${data.accessToken}` },
             credentials: "include",
@@ -80,6 +82,13 @@ function LoginPage(){
           />
         </label>
 
+     {errors && (
+      
+           <ul className='text-l text-red-500 text-start '>
+               <li >{errors}</li>
+           </ul>
+       
+     )}
         <button
           type="submit"
           className="w-full bg-indigo-600 text-white rounded px-3 py-2 disabled:opacity-60 hover:font-bold cursor-pointer"

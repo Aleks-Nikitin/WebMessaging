@@ -15,7 +15,7 @@ function SignUpPage(){
   async function onSubmit(e: any) {
     e.preventDefault()
     try {
-           const response = await fetch("http://localhost:3000/users/",{
+           const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/`,{
     method: "POST",
     headers:{'Content-Type': 'application/x-www-form-urlencoded'},
     body: new URLSearchParams({firstname,lastname,email,password,confpassword})

@@ -33,7 +33,7 @@ export default function Chat(){
      useEffect(()=>{
         async function getUsersList() {
             try {
-                const users = await authFetch("http://localhost:3000/users", {
+                const users = await authFetch(`${import.meta.env.VITE_BACKEND}/users`, {
                     method: "GET",
                 });
 
@@ -73,6 +73,7 @@ export default function Chat(){
 
       async function handleChatCreation(e: any) {
         e.preventDefault();
+        setSearchValue("");
 
         if (!selectedUserId) {
             console.log("Please select a user from the list");
@@ -80,7 +81,7 @@ export default function Chat(){
         }
 
         try {
-            const response = await authFetch("http://localhost:3000/chats",{
+            const response = await authFetch(`${import.meta.env.VITE_BACKEND}/chats`,{
                 method:"POST",
                 headers:{'Content-Type': 'application/x-www-form-urlencoded'},
                     body: new URLSearchParams({
@@ -118,7 +119,7 @@ export default function Chat(){
         }
 
         try {
-            const response = await authFetch("http://localhost:3000/messages",{
+            const response = await authFetch(`${import.meta.env.VITE_BACKEND}/messages`,{
                 method:"POST",
                 headers:{'Content-Type': 'application/x-www-form-urlencoded'},
                     body: new URLSearchParams({

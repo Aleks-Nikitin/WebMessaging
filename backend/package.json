@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "npx jest"
+    "test": "npx jest",
+    "postinstall": "prisma generate",
+    "start": "npx prisma migrate deploy && node app.js"
   },
   "keywords": [],
   "author": "",

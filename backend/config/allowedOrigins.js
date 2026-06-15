@@ -1,6 +1,6 @@
 const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5000'
+    'https://simplewebmessaging.netlify.app',
+    'https://webmessaging-production.up.railway.app'
 ];
 
 export default allowedOrigins;
